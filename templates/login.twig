@@ -1,0 +1,79 @@
+{% extends "layout_full_empty.twig" %}
+
+{% block content %}
+    <div class="login">
+    	<div class="logo">{{ layout.site_name }}</div>
+        <div class="content">
+            <form class="login-form" method="post">
+                <input type="hidden" name="token" value="{{ token }}">
+                <h3 class="form-title font-green">Identifiez vous !</h3>
+                {% if true in errors %}
+                    <div class="alert alert-danger">
+                        {% if errors.empty %}
+                      	  <span><strong>Erreur !</strong> Tous les champs doivent être remplis ! </span>
+                        {% elseif errors.incorrect %}
+                        	<span><strong>Erreur !</strong> Mauvais utilisateur et/ou mot de passe ! </span>
+                        {% elseif errors.db_connect %}
+                        	<span><strong>Erreur !</strong> Accès impossible à la base de données ! </span>
+                        {% elseif errors.db_read %}
+                            <span><strong>Erreur !</strong> Lecture de la base de données impossible ! </span>
+                        {% elseif errors.disabled %}
+                            <span><strong>Erreur !</strong> Ce compte a été désactivé ! </span>
+                        {% elseif errors.maxattempts %}
+                            <span><strong>Erreur !</strong> Vous avez dépassé le nombre maximum de tentatives ! Réessayez dans {{ errors.maxattempts }} secondes. </span>
+                        {% endif %}
+                    </div>
+                {% endif %}
+                {% if disconnected %}
+                    <div class="alert alert-success">
+                        <span>Vous avez bien été déconnecté ! </span>
+                    </div>
+                {% endif %}
+                <div class="form-group">
+                    <label class="control-label">Votre mot de passe :</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="inputGroupPrepend"><i class="icon-key"></i></span>
+                        </div>
+                        <input class="form-control" type="text" placeholder="Mot de passe" name="username" /> 
+                    </div>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" name="remember" value="1" type="checkbox" id="rememberme">
+                    <label class="form-check-label" for="rememberme">Se souvenir de moi</label>
+                  </div>
+                <div class="create-account">
+                    <p><button type="submit" class="btn uppercase">Se connecter</button></p>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+{% block page_js %}
+    <script type="text/javascript">
+    function checkCookies(){
+        if (navigator.cookieEnabled) return true;
+        // set and read cookie
+        document.cookie = "cookietest=1";
+        var ret = document.cookie.indexOf("cookietest=") != -1;
+        // delete cookie
+        document.cookie = "cookietest=1; expires=Thu, 01-Jan-1970 00:00:01 GMT";
+        return ret;
+    }
+    $('#rememberme').change(function(){
+        if($(this).prop('checked') && !checkCookies()){
+            alert('Votre navigateur ne supporte pas les cookies ! La fonction "Se souvenir de moi" n\'est pas disponible.');
+            $(this).prop('checked', false);
+        }
+    });
+    $(document).ready(function(){
+        $('form.login-form').submit(function (e) {
+          if($('#rememberme').prop('checked') && !checkCookies()){
+            alert('Votre navigateur ne supporte pas les cookies ! La fonction "Se souvenir de moi" n\'est pas disponible.');
+            $('#rememberme').prop('checked', false);
+          }
+        });
+    });
+    </script>
+{% endblock %}

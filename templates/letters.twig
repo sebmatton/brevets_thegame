@@ -1,0 +1,1 @@
+{% for letter in solutionprogress.letters %}{% if letter.space == true %}<span class="space"> </span>{% elseif letter.show == true %}<span class="letter">{{ letter.letter }}</span>{% else %}<span class="lock"><i class="icon-lock"></i></span>{% endif %}{% endfor %}

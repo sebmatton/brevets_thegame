@@ -1,0 +1,37 @@
+{% extends "layout_full_empty.twig" %}
+
+{% block page_css %}
+	<link rel="stylesheet" href="{{ layout.base_url }}assets/css/screen.css" >
+{% endblock %}
+
+
+{% block content %}
+<div class="video">
+	<div class="waves-block">
+		<div class="waves"></div>
+		<div class="waves2"></div>
+	</div>
+	<div class="bg-video">
+		<video loop autoplay id="video">
+			<source src="{{ layout.base_url }}assets/videos/{{ video }}" type="video/mp4">
+		</video>
+	</div>
+</div>
+{% endblock %}
+
+{% block page_js %}
+{# <img src="{{ layout.base_url }}assets/img/wave.svg" /> #}
+<script type="text/javascript">
+	$(document).ready(function(){
+		$('.my-background-video').bgVideo();
+	});
+</script>
+<script type="text/javascript">
+$(document).keypress(function(e) {
+    if(e.which == 13) {
+        console.log('ENTER pressed');
+        window.location.href = "{{ layout.base_url }}{{ routing.screen.url }}";
+    }
+});
+</script>
+{% endblock %}

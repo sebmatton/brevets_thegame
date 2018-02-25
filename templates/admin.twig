@@ -1,0 +1,111 @@
+{% extends "layout_full_empty.twig" %}
+
+{% block top %}
+	<div class="top">
+		<div class="user"># <strong>Administration</strong></div>
+		<div class="logout">
+			<a href="{{ layout.base_url }}{{ routing.logout.url }}" class="btn btn-outline-light btn-sm">Déconnexion</a>
+		</div>
+	</div>
+	<div class="cleartop"></div>
+{% endblock %}
+{% block content %}
+<div class="admin">
+	{# GAME #}
+	<div class="block">
+		<h2>Game</h2>
+		{% set progress_pct_dec = (100 * (solutionprogress.progress + game.bonus ) / solutionprogress.total)|round(1) %}
+		<h3>Progress: {{ solutionprogress.progress }} ({{ game.bonus<0?'':'+' }}{{ game.bonus }}) / {{ solutionprogress.total }} ({{ progress_pct_dec }}%)</h3>
+		<div class="margin-left">
+			<p>
+			<div class="progress">
+				<div class="progress-bar" role="progressbar" style="width: {{ progress_pct_dec }}%;" aria-valuenow="{{ progress_pct_dec }}" aria-valuemin="0" aria-valuemax="100">{{ progress_pct_dec }}%</div>
+			</div>
+			</p>
+			<p>
+				<a class="btn btn-success" href="{{ layout.base_url }}{{ routing.admin.url }}?action=game_bonus">Bonus +1</a> <a class="btn btn-warning"  href="{{ layout.base_url }}{{ routing.admin.url }}?action=game_malus">Malus -1</a>
+			</p>
+			<div class="letters">
+				{% for letter in solutionprogress.letters %}{% if letter.space == true %}<span class="space"> </span>{% elseif letter.show == true %}<span class="letter">{{ letter.letter }}</span>{% else %}<span class="lock"><i class="icon-lock"></i></span>{% endif %}{% endfor %}
+				{# <span class="lock"><i class="icon-lock"></i></span><span class="letter">A</span><span class="lock"><i class="icon-lock"></i></span><span class="lock"><i class="icon-lock"></i></span><span class="lock"><i class="icon-lock"></i></span><span class="lock"><i class="icon-lock"></i></span><span class="lock"><i class="icon-lock"></i></span><span> </span><span class="lock"><i class="icon-lock"></i></span><span class="lock"><i class="icon-lock"></i></span>A <span class="lock"><i class="icon-lock"></i></span><span class="lock"><i class="icon-lock"></i></span><span class="lock"><i class="icon-lock"></i></span> <span class="lock"><i class="icon-lock"></i></span><span class="lock"><i class="icon-lock"></i></span><span class="lock"><i class="icon-lock"></i></span><span class="lock"><i class="icon-lock"></i></span><span class="lock"><i class="icon-lock"></i></span><span class="lock"><i class="icon-lock"></i></span> <span class="lock"><i class="icon-lock"></i></span><span class="lock"><i class="icon-lock"></i></span> #}
+			</div>
+		</div>
+		<h3>Control</h3>
+		<div class="margin-left">
+		{% if game.game_id is defined %}
+			<ul class="no-margin">
+				<li><strong>Game ID:</strong> {{ game.game_id }}</li>
+				<li><strong>Start time:</strong> {{ game.start_time|date("d/m/Y H:i") }}</li>
+				{% if game.active == false %}
+					<li><strong>Stop time:</strong> {{ game.stop_time|date("d/m/Y H:i") }}</li>
+				{% endif %}
+			</ul>
+			{% if game.active == true %}
+				<a href="{{ layout.base_url }}{{ routing.admin.url }}?action=game_stop" class="btn btn-danger">Stop</a>
+			{% else %}
+				<a href="{{ layout.base_url }}{{ routing.admin.url }}?action=game_restart" class="btn btn-warning">Restart</a> <a href="{{ layout.base_url }}{{ routing.admin.url }}?action=game_start" class="btn btn-success">Start new game !</a>
+			{% endif %}
+		{% else %}
+			<p>No game defined !</p>
+			<a href="{{ layout.base_url }}{{ routing.admin.url }}?action=game_start" class="btn btn-success">Start new game !</a>
+		{% endif %}
+		</div>
+	</div>
+
+	{# Players #}
+	<div class="block">
+		<h2>Players</h2>
+		<table class="table table-striped table-dark table-bordered table-hover table-sm">
+			<tr>
+				<th scope="col" class="text-center">User ID</th>
+				<th scope="col" class="text-center">Name</th>
+				<th scope="col" class="text-center">Login</th>
+				<th scope="col" class="text-center">Current mission</th>
+				<th scope="col" class="text-center">Missions count</th>
+			</tr>
+			{% for player in players %}
+				<tr>
+					<td class="text-center">{{ player.user_id }}</td>
+					<td class="text-center">{{ player.firstname }}</td>
+					<td class="text-center">{{ player.login }}</td>
+					<td class="text-center">{{ player.mission_id }}</td>
+					<td class="text-center">{{ player.count }}</td>
+				</tr>
+			{% endfor %}
+		</table>
+	</div>
+
+	{# Missions #}
+	<div class="block">
+		<h2>Missions</h2>
+		<table class="table table-striped table-dark table-bordered table-hover table-sm">
+			<tr>
+				<th scope="col" class="text-center">Point</th>
+				<th scope="col" class="text-center">Type</th>
+				<th scope="col" class="text-center">Kind</th>
+				<th scope="col" class="text-center">Busy</th>
+			</tr>
+			{% for mission in missions %}
+				<tr>
+					<td class="text-center">{{ mission.map_point }}</td>
+					<td class="text-center">{{ mission.type }}</td>
+					<td class="text-center">{{ mission.sameref }}</td>
+					<td class="text-center">{{ mission.firstname }}</td>
+				</tr>
+			{% endfor %}
+		</table>
+	</div>
+
+	{# Videos #}
+	<div class="block">
+		<h2>Videos</h2>
+		{% for video in videos %}
+			{% if video == game.video %}
+				<a class="btn btn-success">{{ video }}</a>
+			{% else %}
+				<a class="btn btn-primary" href="{{ layout.base_url }}{{ routing.admin.url }}?action=set_video&video={{ video }}">{{ video }}</a>
+			{% endif %}
+		{% endfor %}
+	</div>
+</div>
+{% endblock %}

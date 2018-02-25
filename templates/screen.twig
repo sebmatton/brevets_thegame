@@ -1,0 +1,45 @@
+{% extends "layout_full_empty.twig" %}
+
+{% block page_css %}
+	<link rel="stylesheet" href="{{ layout.base_url }}assets/css/screen.css" >
+{% endblock %}
+
+
+{% block content %}
+<img src="{{ layout.base_url }}assets/img/unicorn.gif" class="unicorn" />
+
+<div class="screen">
+	<div class="block">
+		<div class="letters">
+			{% include 'letters.twig' %}
+			{# {% for letter in solutionprogress.letters %}{% if letter.space == true %}<span class="space"> </span>{% elseif letter.show == true %}<span class="letter">{{ letter.letter }}</span>{% else %}<span class="lock"><i class="icon-lock"></i></span>{% endif %}{% endfor %} #}
+		</div>
+	</div>
+	<div class="temp"></div>
+</div>
+{% endblock %}
+
+{% block page_js %}
+	<script type="text/javascript">
+	setInterval(function() {
+	    $.get( "{{ layout.base_url }}{{ routing.letters.url }}", function( data ) {
+	    	$('.temp').html(data);
+	    	if($('.letters').html()!=$('.temp').html()){
+			  	$('.letters').html(data);
+		    	$('.screen').css({transition: 'background 0s'});
+		    	$('.screen').css({background: 'rgba(255,255,255,1)'});
+		    	setTimeout(function(){
+				  	$('.screen').css({transition: 'background 2s'});
+				  	$('.screen').css({background: 'rgba(255,255,255,0)'});
+		    	}, 100);
+	    	}
+		});
+	}, 5000);
+	$(document).keypress(function(e) {
+	    if(e.which == 13) {
+	        console.log('ENTER pressed');
+	        window.location.href = "{{ layout.base_url }}{{ routing.video.url }}";
+	    }
+	});
+	</script>
+{% endblock %}

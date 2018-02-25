@@ -1,0 +1,58 @@
+{% extends "layout_full_empty.twig" %}
+
+{% block top %}
+	<div class="top">
+		<div class="user">Équipe: <strong>{{ user.username }}</strong></div>
+		<div class="logout">
+			<a href="{{ layout.base_url }}{{ routing.logout.url }}" class="btn btn-outline-light btn-sm">Déconnexion</a>
+		 </div>
+	</div>
+	<div class="cleartop"></div>
+{% endblock %}
+
+{% block content %}
+<div class="player">
+	{% set current_found = false %}
+	{% for mission in missions_list if not current_found %}
+		{% if mission.result == -1 %}
+			{% set current_found = true %}
+			<div class="nextPoint_title">Prochaine mission :</div>
+			<div class="nextPoint"><span>Point {{ mission.map_point }}</span></div>
+			<form method="post" action="{{ layout.base_url }}{{ routing.game.url }}?action=validate_mission">
+				<h2>Valider la mission:</h2>
+				<input type="text" name="solution" autocomplete="off"  placeholder="Code" class="form-control solution">
+				<input type="submit" class="btn btn-warning" value="Valider">
+			</form>
+		{% endif %}
+	{% endfor %}
+	{% if current_found == false %}
+		<div class="nextPoint">
+			<a class="btn btn-primary btn-lg" href="{{ layout.base_url }}{{ routing.game.url }}?action=new_mission"><i class="icon-direction"></i> Nouvelle mission</a>
+		</div>
+	{% endif %}
+	<div class="last_missions">
+		<h1>Missions déjà réalisées :</h1>
+		<ol class="last_missions">
+			{% set hist_count = 0 %}
+			{% for mission in missions_list %}
+				{% if mission.result != -1 %}
+					{% set hist_count = hist_count + 1 %}
+				<li>
+					{% if mission.result > 0 %}
+						<i class="icon-check"></i>
+					{% else %}
+						<i class="icon-close"></i>
+					{% endif %}
+					Point {{ mission.map_point }}: {{ (mission.result > 0)?'Réussi':'Raté' }} !</li>
+				{% endif %}
+			{% endfor %}
+			{% if hist_count == 0 %}Aucune{% endif %}
+{# 			<li><i class="icon-check"></i> Point 32: Réussi !</li>
+			<li><i class="icon-check"></i> Point 32: Réussi !</li>
+			<li><i class="icon-close"></i> Point 12: Raté !</li>
+			<li><i class="icon-check"></i> Point 32: Réussi !</li>
+			<li><i class="icon-close"></i> Point 12: Raté !</li> #}
+		</ol>
+	</div>
+</div>
+{% endblock %}
